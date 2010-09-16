@@ -6,6 +6,7 @@
 // @runat		   document-end
 // @version 1.0
 // ==/UserScript==
+//
 
 function GB_show(caption, url, height, width) {
 	
