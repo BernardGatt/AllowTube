@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name           Hide Meh Ass
-// @namespace      lol.pwnt
-// @description    lol
+// @name           AllowTube
+// @namespace      allow.tube
+// @description    A grease-monkey script that enables users to visit YouTube links from behind any proxy/firewall.
 // @include        *
 // @runat		   document-end
 // @version 1.0
