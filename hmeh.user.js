@@ -7,57 +7,6 @@
 // @version 1.0
 // ==/UserScript==
 
-/*
-function GB_show(caption, url, height, width) {
-	
-  window.GB_DONE = false;
-  window.GB_ANIMATION = true;
-  window.GB_HEIGHT = height || 400;
-  window.GB_WIDTH = width || 400;
-  
-  if(!GB_DONE) {
-    $(document.body)
-      .append("<div id='GB_overlay'></div><div id='GB_window' style='overflow:visible'><div id='GB_caption'></div>"
-        + "</div>");
-    $("#GB_window img").click(GB_hide);
-    $("#GB_overlay").click(GB_hide);
-    $(window).resize(GB_position);
-    GB_DONE = true;
-  }
-
- GB_hide();
-
-  
-  $("#GB_window").append("<iframe style='visibility:hidden' frameBorder='0' scrolling='no' id='GB_frame' onload='this.style.visibility = \"visible\"' src='"+url+"'></iframe>");
-
-  $("#GB_caption").html(caption);
-  $("#GB_overlay").show();
-  
-  GB_position();
-
-	if(GB_ANIMATION)
-	{
-		$("#GB_window").slideDown("slow");
-	}
-	else
-	{
-		$("#GB_window").show();
-	}
-}
-
-function GB_hide() {
-  $("#GB_window,#GB_overlay").hide();
-  $("#GB_frame").remove();
-}
-
-function GB_position() {
-  var de = document.documentElement;
-  var w = self.innerWidth || (de&&de.clientWidth) || document.body.clientWidth;
-  $("#GB_window").css({width:GB_WIDTH+"px",height:GB_HEIGHT+"px",
-    left: ((w - GB_WIDTH)/2)+"px" });
-  $("#GB_frame").css("height",GB_HEIGHT - 32 +"px");
-}
-*/
 
 function loadJquery(callback) {
 
@@ -119,8 +68,6 @@ function main_load()
 			  close: function(event,ui){$("#" + iframeId).remove();}});
 			  
 		$("#" + iframeId).css("width", "410");
-
-		//GB_show('YouTube Viewer', 'http://hidemyass.com?' + hmehPro + '=' + vidId, 360, 480);
 		
 		return false;
 	});
@@ -157,38 +104,15 @@ function init_main()
 {
 	
 	var loc = $(location).attr('href');
-	//var inject = document.createElement("script");
-	//inject.setAttribute("type", "text/javascript");
 	
 	if (loc.toLowerCase().indexOf('hidemyass.com') != -1)
-	{
-		//inject.appendChild(document.createTextNode(hma_load));
-		//document.body.appendChild(inject);		
-		
+	{			
 		hma_load();
 	}
 	else
 	{
-		//inject.appendChild(document.createTextNode(main_load));
-		//document.body.appendChild(inject);
 		main_load();
 	}
 }
-
-//var inject = document.createElement("script");
-
-
-//inject.appendChild(document.createTextNode(GB_show));
-//inject.appendChild(document.createTextNode(GB_hide));
-//inject.appendChild(document.createTextNode(GB_position));
-//inject.appendChild(document.createTextNode(init_main + "init_main();"));
-
-//var injectCSS = document.createElement("style");
-
-//injectCSS.setAttribute("type", "text/css");
-//injectCSS.appendChild(document.createTextNode("#GB_overlay{ position:absolute; margin:auto; top:0; left:0; z-index:100; width: 100%; height:100%}* html #GB_overlay{ background-color:#000; background-color:transparent}#GB_window{ top:10px; left:0px; position:fixed; background:#810500; border:1px solid #aaa; width:400px; height:400px; z-index:150}#GB_frame{ border:0; width:100%; height:378px}#GB_caption{ font:10px bold helvetica,verdana,sans-serif; font-weight:bold; color:#fff; background:#810500; padding:2px 0 2px 5px; margin:0; text-align:left}#GB_window img{ position:absolute; top:2px; right:5px; cursor:pointer; cursor:hand}"));
-
-//document.body.appendChild(injectCSS);
-
 
 loadJquery(main_load + hma_load + init_main + "init_main();");
