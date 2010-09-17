@@ -105,15 +105,20 @@ function main_load()
 			vidId = vidId.substr(0, vidId.indexOf("&"));
 		}
 		
+		var iframeId = "GB_frame_" + vidId;
 		
-		 $("#GB_frame_" + vidId).remove();
+		
+		 $("#" + iframeId).remove();
 		 
-		 $(document.body).append("<iframe style='visibility:hidden' frameBorder='0' scrolling='no' id='GB_frame_" + vidId + "' onload='this.style.visibility = \"visible\"' src='" + 'http://hidemyass.com?' + hmehPro + '=' + vidId + "'></iframe>");
+		 $(document.body).append("<iframe style='visibility:hidden' frameBorder='0' scrolling='no' id='" + iframeId + "' onload='this.style.visibility = \"visible\"' src='" + 'http://hidemyass.com?' + hmehPro + '=' + vidId + "'></iframe>");
 		
-		$("#GB_frame_" + vidId).dialog(
+		$("#" + iframeId).dialog(
 			{ width: 460, 
 			  height : 360,
-			  close: function(event,ui){$("#GB_frame_" + vidId).remove();}});
+			  resizable : false,
+			  close: function(event,ui){$("#" + iframeId).remove();}});
+			  
+		$("#" + iframeId).css("width", "410");
 
 		//GB_show('YouTube Viewer', 'http://hidemyass.com?' + hmehPro + '=' + vidId, 360, 480);
 		
