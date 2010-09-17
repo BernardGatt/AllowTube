@@ -87,15 +87,19 @@ function hma_load()
 	else {
 		if (document.referrer.indexOf(hmehPro) != -1)
 		{
-			if ($('#error').length > 0)
+		
+			if ( $('#error').length > 0 || $("#hma-player").length == 0 )
 			{	
 				document.documentElement.innerHTML = "<div style='color:#fff; background-color:#000; text-align:center;'>Error, please <a style='color:#fff;' title='a link... within a link... inception.... :O' href='"+document.referrer+"'>reload</a> the video.</div>";
 			}
-			document.body.style.visibility = "hidden";
-			var video = document.getElementById("hma-player").innerHTML;
-			document.documentElement.innerHTML = video;
-			
-			$("#hma-player_api").prepend("<param name=\"wmode\" value=\"transparent\">");
+			else
+			{
+				document.body.style.visibility = "hidden";
+				var video = document.getElementById("hma-player").innerHTML;
+				document.documentElement.innerHTML = video;
+				
+				$("#hma-player_api").prepend("<param name=\"wmode\" value=\"transparent\">");
+			}
 		}
 	}
 }
