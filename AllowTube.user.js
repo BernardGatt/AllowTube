@@ -3,6 +3,9 @@
 // @namespace      allow.tube
 // @description    A grease-monkey script that enables users to visit YouTube links from behind any proxy/firewall.
 // @include        *
+// @include        https://*
+// @include        https://mail.google.com/*
+// @include        http://mail.google.com/*
 // @runat		   document-end
 // @version 1.0
 // ==/UserScript==
@@ -46,10 +49,11 @@ function main_load()
 	var targetAcquired = "youtube.com/watch?v=";
 
 
-	hmeh_jQuery("a[href*='" + targetAcquired + "']").click(function ()
+	hmeh_jQuery("a[href*='" + targetAcquired + "']").click(function (e)
 	{
-	    var target = hmeh_jQuery(this).attr('href');
+	    e.preventDefault();
 
+	    var target = hmeh_jQuery(this).attr('href');	    
 	    var index = target.toLowerCase().indexOf(targetAcquired);
 	    var vidId = target.substr(index + targetAcquired.length);
 
@@ -76,7 +80,7 @@ function main_load()
 
 
 	    var onmessage = function (e)
-	    {	
+	    {
 	        var dataSplit = e.data.split("|HMEH|");
 	        hmeh_jQuery("#GB_frame_" + dataSplit[0]).dialog("option", "title", dataSplit[1]);
 
@@ -162,7 +166,7 @@ function init_main()
 	}
 	else
 	{
-		main_load();
+	    window.setInterval(main_load, 1000);
 	}
 }
 
