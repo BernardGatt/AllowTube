@@ -168,7 +168,7 @@ function init_main()
 	}
 	else
 	{
-		document.onclick = main_load();
+		document.onclick = main_load;
 		window.setInterval(main_load, 1000);
 	}
 }
