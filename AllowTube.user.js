@@ -6,7 +6,7 @@
 // @include        https://*
 // @include        https://mail.google.com/*
 // @include        http://mail.google.com/*
-// @runat		   document-end
+// @runat		   document-start
 // @version 1.0
 // ==/UserScript==
 
