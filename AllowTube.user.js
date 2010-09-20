@@ -48,9 +48,15 @@ function main_load()
 
 	hmeh_jQuery("a[href*='" + targetAcquired + "']").click(function (e)
 	{
+
 	    e.preventDefault();
 
-	    var target = hmeh_jQuery(this).attr('href');	    
+	    var target = hmeh_jQuery(this).attr('href');
+	    if (target.length < 0)
+	    {
+	        alert('bug');
+	        debugger;
+	    }
 	    var index = target.toLowerCase().indexOf(targetAcquired);
 	    var vidId = target.substr(index + targetAcquired.length);
 
@@ -84,17 +90,19 @@ function main_load()
 	    {
 	        window.addEventListener('message', onmessage, false);
 	    }
-		else if (typeof window.attachEvent != 'undefined')
+	    else if (typeof window.attachEvent != 'undefined')
 	    {
 	        window.attachEvent('onmessage', onmessage);
 	    }
 
 	    return false;
 	});
-	
+
 	hmeh_jQuery("embed[src*='" + embedTargetAcquired + "']").replaceWith(function ()
-	{
-	    var target = hmeh_jQuery(this).attr('src');	    
+	{	   	    
+	    var target = hmeh_jQuery(this).attr('src');
+	    if (this.length == 0 || target.length == 0) { return; }
+	    alert('test');
 	    var index = target.toLowerCase().indexOf(embedTargetAcquired);
 	    var vidId = target.substr(index + embedTargetAcquired.length);
 
@@ -102,8 +110,8 @@ function main_load()
 	    {
 	        vidId = vidId.substr(0, vidId.indexOf("&"));
 	    }
-		
-		return "<iframe width='" + hmeh_jQuery(this).attr('width') +  "' height='" + hmeh_jQuery(this).attr('height') + "' style='visibility:hidden' frameBorder='0' scrolling='no' onload='this.style.visibility = \"visible\"' src='" + 'http://hidemyass.com?' + hmehPro + '=' + vidId + "'></iframe>";
+
+	    return "<iframe width='" + hmeh_jQuery(this).attr('width') + "' height='" + hmeh_jQuery(this).attr('height') + "' style='visibility:hidden' frameBorder='0' scrolling='no' onload='this.style.visibility = \"visible\"' src='" + 'http://hidemyass.com?' + hmehPro + '=' + vidId + "'></iframe>";
 	});
 }
 
@@ -131,6 +139,14 @@ function hma_load()
 			}
 			else
 			{
+			    $f(0).onLoad(function ()
+			    {
+			        $f(0).stop();
+			        $f(0).hide();
+			        $f(0).stopBuffering();
+			        $f(0).startBuffering();
+			        $f(0).show();
+			    });
                 var targetAcquired = "youtube.com/watch?v=";
 
                 var target = hmeh_jQuery("#hmainput").val();
