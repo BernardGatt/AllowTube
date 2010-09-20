@@ -54,8 +54,7 @@ function main_load()
 	    var target = hmeh_jQuery(this).attr('href');
 	    if (target.length < 0)
 	    {
-	        alert('bug');
-	        debugger;
+	        return;
 	    }
 	    var index = target.toLowerCase().indexOf(targetAcquired);
 	    var vidId = target.substr(index + targetAcquired.length);
@@ -102,7 +101,7 @@ function main_load()
 	{	   	    
 	    var target = hmeh_jQuery(this).attr('src');
 	    if (this.length == 0 || target.length == 0) { return; }
-	    alert('test');
+	    
 	    var index = target.toLowerCase().indexOf(embedTargetAcquired);
 	    var vidId = target.substr(index + embedTargetAcquired.length);
 
