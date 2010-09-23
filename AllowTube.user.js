@@ -38,80 +38,90 @@ function loadJquery(callback)
     document.body.appendChild(jqueryUI);
 }
 
-
 function main_load()
 {
 	var hmehPro = 'hmeh-pro';
 
 	var targetAcquired = "youtube.com/watch?v=";
 	var embedTargetAcquired = "youtube.com/v/";
-
-	hmeh_jQuery("a[href*='" + targetAcquired + "']").click(function (e)
+	
+	var anchorElements = hmeh_jQuery("a[href*='" + targetAcquired + "']");
+	
+	if (anchorElements.length != 0)
 	{
+		anchorElements.unbind('mousedown');
+		anchorElements.unbind('click');
+		
+		anchorElements.click(function (e)
+		{
+			e.preventDefault();
+			e.stopPropagation();
 
-	    e.preventDefault();
+			var target = decodeURIComponent(hmeh_jQuery(this).attr('href'));
+			
+			var index = target.toLowerCase().indexOf(targetAcquired);
+			var vidId = target.substr(index + targetAcquired.length);
 
-	    var target = hmeh_jQuery(this).attr('href');
-	    if (target.length < 0)
-	    {
-	        return;
-	    }
-	    var index = target.toLowerCase().indexOf(targetAcquired);
-	    var vidId = target.substr(index + targetAcquired.length);
+			if (vidId.indexOf("&") != -1)
+			{
+				vidId = vidId.substr(0, vidId.indexOf("&"));
+			}
 
-	    if (vidId.indexOf("&") != -1)
-	    {
-	        vidId = vidId.substr(0, vidId.indexOf("&"));
-	    }
+			var iframeId = "GB_frame_" + vidId;
 
-	    var iframeId = "GB_frame_" + vidId;
+			hmeh_jQuery("#" + iframeId).remove();
 
-	    hmeh_jQuery("#" + iframeId).remove();
+			hmeh_jQuery(document.body).append("<iframe style='visibility:hidden' frameBorder='0' scrolling='no' id='" + iframeId + "' onload='this.style.visibility = \"visible\"' title='YouTube Viewer' src='" + 'http://hidemyass.com?' + hmehPro + '=' + vidId + "'></iframe>");
 
-	    hmeh_jQuery(document.body).append("<iframe style='visibility:hidden' frameBorder='0' scrolling='no' id='" + iframeId + "' onload='this.style.visibility = \"visible\"' title='YouTube Viewer' src='" + 'http://hidemyass.com?' + hmehPro + '=' + vidId + "'></iframe>");
+			hmeh_jQuery("#" + iframeId).dialog(
+				{ width: 460,
+					height: 360,
+					resizable: false,
+					close: function (event, ui) { hmeh_jQuery("#" + iframeId).remove(); }
+				});
 
-	    hmeh_jQuery("#" + iframeId).dialog(
-			{ width: 460,
-			    height: 360,
-			    resizable: false,
-			    close: function (event, ui) { hmeh_jQuery("#" + iframeId).remove(); }
-			});
+			hmeh_jQuery("#" + iframeId).css("width", "410px");
 
-	    hmeh_jQuery("#" + iframeId).css("width", "410px");
+			var onmessage = function (e)
+			{
+				var dataSplit = e.data.split("|HMEH|");
+				hmeh_jQuery("#GB_frame_" + dataSplit[0]).dialog("option", "title", dataSplit[1]);
+			};
 
-	    var onmessage = function (e)
-	    {
-	        var dataSplit = e.data.split("|HMEH|");
-	        hmeh_jQuery("#GB_frame_" + dataSplit[0]).dialog("option", "title", dataSplit[1]);
-	    };
+			if (typeof window.addEventListener != 'undefined')
+			{
+				window.addEventListener('message', onmessage, false);
+			}
+			else if (typeof window.attachEvent != 'undefined')
+			{
+				window.attachEvent('onmessage', onmessage);
+			}
 
-	    if (typeof window.addEventListener != 'undefined')
-	    {
-	        window.addEventListener('message', onmessage, false);
-	    }
-	    else if (typeof window.attachEvent != 'undefined')
-	    {
-	        window.attachEvent('onmessage', onmessage);
-	    }
+			return false;
+		});
+	}
 
-	    return false;
-	});
+	var embeddedElements = hmeh_jQuery("embed[src*='" + embedTargetAcquired + "']");
+	
+	if (embeddedElements.length != 0)
+	{
+		embeddedElements.replaceWith(function ()
+		{
+			var target = decodeURIComponent(hmeh_jQuery(this).attr('src'));
+			
+			if (this.length == 0 || target.length == 0) { return; }
+			
+			var index = target.toLowerCase().indexOf(embedTargetAcquired);
+			var vidId = target.substr(index + embedTargetAcquired.length);
 
-	hmeh_jQuery("embed[src*='" + embedTargetAcquired + "']").replaceWith(function ()
-	{	   	    
-	    var target = hmeh_jQuery(this).attr('src');
-	    if (this.length == 0 || target.length == 0) { return; }
-	    
-	    var index = target.toLowerCase().indexOf(embedTargetAcquired);
-	    var vidId = target.substr(index + embedTargetAcquired.length);
+			if (vidId.indexOf("&") != -1)
+			{
+				vidId = vidId.substr(0, vidId.indexOf("&"));
+			}
 
-	    if (vidId.indexOf("&") != -1)
-	    {
-	        vidId = vidId.substr(0, vidId.indexOf("&"));
-	    }
-
-	    return "<iframe width='" + hmeh_jQuery(this).attr('width') + "' height='" + hmeh_jQuery(this).attr('height') + "' style='visibility:hidden' frameBorder='0' scrolling='no' onload='this.style.visibility = \"visible\"' src='" + 'http://hidemyass.com?' + hmehPro + '=' + vidId + "'></iframe>";
-	});
+			return "<iframe width='" + hmeh_jQuery(this).attr('width') + "' height='" + hmeh_jQuery(this).attr('height') + "' style='visibility:hidden' frameBorder='0' scrolling='no' onload='this.style.visibility = \"visible\"' src='" + 'http://hidemyass.com?' + hmehPro + '=' + vidId + "'></iframe>";
+		});
+	}
 }
 
 function hma_load()
@@ -125,7 +135,7 @@ function hma_load()
 	{
 		hmeh_jQuery('document').css("visibility","hidden");
 		var vidId = loc.substr(index + hmehPro.length);
-		hmeh_jQuery('input[type=\"text\"]').val("http://youtube.com/watch?v=" + vidId);
+		hmeh_jQuery('form input:text').val("http://youtube.com/watch?v=" + vidId);
 		hmeh_jQuery('#form').submit();
 	}
 	else
@@ -138,14 +148,17 @@ function hma_load()
 			}
 			else
 			{
-			    $f(0).onLoad(function ()
+				var player = flowplayer(0);
+				
+			    player.onLoad(function ()
 			    {
-			        $f(0).stop();
-			        $f(0).hide();
-			        $f(0).stopBuffering();
-			        $f(0).startBuffering();
-			        $f(0).show();
+			        player.stop();
+			        player.hide();
+			        player.stopBuffering();
+			        player.startBuffering();
+			        player.show();
 			    });
+				
                 var targetAcquired = "youtube.com/watch?v=";
 
                 var target = hmeh_jQuery("#hmainput").val();
@@ -171,8 +184,6 @@ function hma_load()
 
 function init_main()
 {
-	while (!jQuery) {}
-	
 	window.hmeh_jQuery = $.noConflict();
 	
 	var loc = hmeh_jQuery(location).attr('href');
@@ -183,7 +194,7 @@ function init_main()
 	}
 	else
 	{
-		document.onclick = main_load;
+		main_load();
 		window.setInterval(main_load, 1000);
 	}
 }
