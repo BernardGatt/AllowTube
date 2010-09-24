@@ -1,57 +1,71 @@
 function hma_load()
 {
 	var hmehPro = '?hmeh-pro=';
-	var loc = hmeh_jQuery(location).attr('href');
+	var loc = window.location.href;
 	
 	var index = loc.indexOf(hmehPro);
 	
 	if (index != -1)
 	{
-		hmeh_jQuery('document').css("visibility","hidden");
+		document.body.style.visibility = "hidden";
 		var vidId = loc.substr(index + hmehPro.length);
-		hmeh_jQuery('form input:text').val("http://youtube.com/watch?v=" + vidId);
-		hmeh_jQuery('#form').submit();
+		
+		var frm = document.forms[0];
+		frm.elements[0].value = "http://www.youtube.com/watch?v=" + vidId;
+		frm.submit();
 	}
 	else
 	{
-		if (document.referrer.indexOf(hmehPro) != -1)
+		if (document.referrer.indexOf(hmehPro) == -1)
 		{
-			if ( hmeh_jQuery('#error').length > 0 || hmeh_jQuery("#hma-player").length == 0 )
-			{	
-				document.documentElement.innerHTML = "<div style='color:#fff; background-color:#000; text-align:center;'>Error, please <a style='color:#fff;' title='a link... within a link... inception.... :O' href='"+document.referrer+"'>reload</a> the video.</div>";
-			}
-			else
+			return;
+		}	
+		
+		if (document.getElementById('error') != null)
+		{			
+			var ref = document.referrer;
+			var indexRef = ref.indexOf(hmehPro);
+			window.vidIdRef = ref.substr(indexRef + hmehPro.length);
+			document.documentElement.innerHTML = "<div style='color:#fff; background-color:#000; text-align:center;'>Error, please <a style='color:#fff;' href='" + ref + "' onclick='window.parent.postMessage(vidIdRef + \"|HMEH|\" + \"HIDE\",\"*\");'>reload</a> the video.</div>";
+			window.parent.postMessage(vidIdRef + "|HMEH|" + "ERROR",'*');
+		}
+		else
+		{
+			var player = flowplayer(0);
+			
+			player.onLoad(function ()
 			{
-				var player = flowplayer(0);
-				
-			    player.onLoad(function ()
-			    {
-			        player.stop();
-			        player.hide();
-			        player.stopBuffering();
-			        player.startBuffering();
-			        player.show();
-			    });
-				
-                var targetAcquired = "youtube.com/watch?v=";
+				player.stop();
+				player.hide();
+				player.stopBuffering();
+				player.startBuffering();
+				player.show();
+			});
+			
+			var targetAcquired = "youtube.com/watch?v=";
 
-                var target = hmeh_jQuery("#hmainput").val();
+			var target = document.getElementById("hmainput").value;
 
-	            var index = target.toLowerCase().indexOf(targetAcquired);
-	            var vidId = target.substr(index + targetAcquired.length);
+			var index = target.toLowerCase().indexOf(targetAcquired);
+			var vidId = target.substr(index + targetAcquired.length);
 
-	            if (vidId.indexOf("&") != -1)
-	            {
-	                vidId = vidId.substr(0, vidId.indexOf("&"));
-	            }
-
-			    window.parent.postMessage(vidId + "|HMEH|" + hmeh_jQuery("#eow-title").text(),'*');
-				document.body.style.visibility = "hidden";
-				var video = document.getElementById("hma-player").innerHTML;
-				document.documentElement.innerHTML = video;
-				
-				hmeh_jQuery("#hma-player_api").prepend("<param name=\"wmode\" value=\"transparent\">");
+			if (vidId.indexOf("&") != -1)
+			{
+				vidId = vidId.substr(0, vidId.indexOf("&"));
 			}
+			
+			var title = document.getElementById("eow-title").innerText;
+			
+			var video = document.getElementById('hma-player_api');
+			
+			var trans = document.createElement('param');
+			trans.setAttribute('name','wmode');
+			trans.setAttribute('value','transparent');
+			video.appendChild(trans);
+			
+			document.body.innerHTML = video.outerHTML;		
+			
+			window.parent.postMessage(vidId + "|HMEH|" + title,'*');
 		}
 	}
 }

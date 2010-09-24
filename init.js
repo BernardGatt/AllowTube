@@ -1,18 +1,25 @@
 function init_main()
 {
-	window.hmeh_jQuery = $.noConflict();
+	//load_jQuery();
+	//load_jQueryUI();
 	
-	var loc = hmeh_jQuery(location).attr('href');
+	
+	var loc = window.location.href;
 	
 	if (loc.toLowerCase().indexOf('hidemyass.com') != -1)
 	{			
-		hma_load();
+		var script = document.createElement("script");
+
+        script.textContent = hma_load + "hma_load();";
+        document.body.appendChild(script);
+		
 	}
 	else
 	{
+		window.hmeh_jQuery = $.noConflict();
 		main_load();
 		window.setInterval(main_load, 1000);
 	}
 }
 
-loadJquery(main_load + hma_load + init_main + "init_main();");
+loadInit(main_load + hma_load + init_main + "init_main();");
