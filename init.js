@@ -5,7 +5,7 @@
 	if (loc.toLowerCase().indexOf('hidemyass.com') != -1)
 	{
 		var script = document.createElement("script");
-		script.textContent = "(" + hma_load + ")();";
+		script.textContent = hma_error + "(" + hma_load + ")();";
 		document.body.appendChild(script);
 	}
 	else

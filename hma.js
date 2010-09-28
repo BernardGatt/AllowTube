@@ -1,5 +1,6 @@
 function hma_load()
 {
+	
 	var hmehPro = '?hmeh-pro=';
 	var loc = window.location.href;
 	
@@ -24,27 +25,16 @@ function hma_load()
 			return;
 		}
 		
+		window.vidIdRef = ref.substr(hmehIndexRef + hmehPro.length);
+		
 		if (document.getElementById('error') != null)
 		{
-			window.vidIdRef = ref.substr(hmehIndexRef + hmehPro.length);			
-			document.documentElement.innerHTML = "<div style='color:#fff; background-color:#000; text-align:center;'>Error, please <a style='color:#fff;' href='" + ref + "' onclick='window.parent.postMessage(vidIdRef + \"|HMEH|\" + \"HIDE\",\"*\");'>reload</a> the video.</div>";
-			window.parent.postMessage(vidIdRef + "|HMEH|" + "ERROR",'*');
+			hma_error();
+			return;
 		}
-		else
+		
+		try
 		{
-			var player = flowplayer(0);
-			
-			player.onLoad(function ()
-			{
-				player.stop();
-				player.hide();
-				player.stopBuffering();
-				player.startBuffering();
-				player.show();
-				
-				window.parent.postMessage(vidId + "|HMEH|" + title,'*');
-			});
-			
 			var targetAcquired = "youtube.com/watch?v=";
 			var target = document.getElementById("hmainput").value;
 
@@ -54,18 +44,42 @@ function hma_load()
 			{
 				vidId = vidId.substr(0, vidId.indexOf("&"));
 			}
-
+			
 			var title = document.getElementById("eow-title").innerText;
-
 			var video = document.getElementById('hma-player_api');
-
+			
 			var playerFix = document.createElement('param');
 			playerFix.setAttribute('name','wmode');
 			playerFix.setAttribute('value','transparent');
 			video.appendChild(playerFix);
-
-			document.body.innerHTML = video.outerHTML;		
+			
+			for (var i = 0; i < video.childNodes.length; i++)
+			{
+				var node = video.childNodes[i];
+				
+				if (node.name.toLowerCase() == "flashvars")
+				{
+					var value = node.value;
+					node.value = value.substr(0, value.length - 3) + ', "autoPlay":false}]}';
+				}
+			}
+	
+			document.body.innerHTML = video.outerHTML;
+			
+			window.parent.postMessage(vidId + "|HMEH|" + title,'*');
+		}
+		
+		catch(err)
+		{
+			hma_error();
 		}
 	}
+}
+
+function hma_error()
+{
+	var ref = document.referrer;
+	document.body.innerHTML = "<div style='color:#fff; background-color:#000; text-align:center;'>Error, please <a style='color:#ff0; text-decoration: underline;' href='" + ref + "' onclick='window.parent.postMessage(vidIdRef + \"|HMEH|\" + \"HIDE\",\"*\");'>reload</a> the video.</div>";
+	window.parent.postMessage(vidIdRef + "|HMEH|" + "ERROR",'*');
 }
 

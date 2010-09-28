@@ -7,7 +7,7 @@
 // @include        https://mail.google.com/*
 // @include        http://mail.google.com/*
 // @runat		   document-start
-// @version 1.0
+// @version 1.1
 // ==/UserScript==
 
 function main_load()
