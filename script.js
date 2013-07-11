@@ -1,15 +1,3 @@
-// ==UserScript==
-// @name           AllowTube
-// @namespace      allow.tube
-// @description    A grease-monkey script that enables users to visit YouTube links from behind any proxy/firewall.
-// @include        *
-// @include        https://*
-// @include        https://mail.google.com/*
-// @include        http://mail.google.com/*
-// @runat		   document-start
-// @version 1.0
-// ==/UserScript==
-
 function loadJquery(callback)
 {
     var cssLoad = document.createElement("style");
@@ -44,21 +32,21 @@ function main_load()
 
 	var targetAcquired = "youtube.com/watch?v=";
 	var embedTargetAcquired = "youtube.com/v/";
-	
+
 	var anchorElements = hmeh_jQuery("a[href*='" + targetAcquired + "']");
-	
+
 	if (anchorElements.length != 0)
 	{
 		anchorElements.unbind('mousedown');
 		anchorElements.unbind('click');
-		
+
 		anchorElements.click(function (e)
 		{
 			e.preventDefault();
 			e.stopPropagation();
 
 			var target = decodeURIComponent(hmeh_jQuery(this).attr('href'));
-			
+
 			var index = target.toLowerCase().indexOf(targetAcquired);
 			var vidId = target.substr(index + targetAcquired.length);
 
@@ -71,16 +59,16 @@ function main_load()
 
 			hmeh_jQuery("#" + iframeId).remove();
 
-			hmeh_jQuery(document.body).append("<iframe style='visibility:hidden' frameBorder='0' scrolling='no' id='" + iframeId + "' onload='this.style.visibility = \"visible\"' title='YouTube Viewer' src='" + 'http://hidemyass.com?' + hmehPro + '=' + vidId + "'></iframe>");
+			hmeh_jQuery(document.body).append("<iframe style='visibility:hidden; margin: 0px; padding: 0px;' frameBorder='0' scrolling='no' id='" + iframeId + "' onload='this.style.visibility = \"visible\"' title='YouTube Viewer' src='" + 'http://hidemyass.com?' + hmehPro + '=' + encodeURI("http://youtube.com/watch?aembed=1&aplay=1&v=") + vidId + encodeURI("?autohide=1")+"'></iframe>");
 
 			hmeh_jQuery("#" + iframeId).dialog(
-				{ width: 460,
-					height: 360,
-					resizable: false,
+				{ width: 640,
+					height: 480,
+					resizable: true,
 					close: function (event, ui) { hmeh_jQuery("#" + iframeId).remove(); }
 				});
 
-			hmeh_jQuery("#" + iframeId).css("width", "410px");
+			hmeh_jQuery("#" + iframeId).css("width", "640px");
 
 			var onmessage = function (e)
 			{
@@ -102,15 +90,15 @@ function main_load()
 	}
 
 	var embeddedElements = hmeh_jQuery("embed[src*='" + embedTargetAcquired + "']");
-	
+
 	if (embeddedElements.length != 0)
 	{
 		embeddedElements.replaceWith(function ()
 		{
 			var target = decodeURIComponent(hmeh_jQuery(this).attr('src'));
-			
+
 			if (this.length == 0 || target.length == 0) { return; }
-			
+
 			var index = target.toLowerCase().indexOf(embedTargetAcquired);
 			var vidId = target.substr(index + embedTargetAcquired.length);
 
@@ -126,68 +114,48 @@ function main_load()
 
 function hma_load()
 {
-	var hmehPro = '?hmeh-pro=';
-	var loc = hmeh_jQuery(location).attr('href');
-	
-	var index = loc.indexOf(hmehPro);
-	
-	if (index != -1)
-	{
-		hmeh_jQuery('document').css("visibility","hidden");
-		var vidId = loc.substr(index + hmehPro.length);
-		hmeh_jQuery('form input:text').val("http://youtube.com/watch?v=" + vidId);
-		hmeh_jQuery('#form').submit();
-	}
-	else
-	{
+    var hmehPro = '?hmeh-pro=';
+    var loc = hmeh_jQuery(location).attr('href');
+    var index = loc.indexOf(hmehPro);
+    if (index != -1)
+    {
+	    document.body.style.display = "none";
+	    var vidId = loc.substr(index + hmehPro.length);
+	    hmeh_jQuery('form input:text').val(decodeURI(vidId));
+	    hmeh_jQuery('#hmabutton').click();
+    }
+	// Youtube embedding mode
+    else if (document.referrer.indexOf("aembed=1") > 0)
+    {
 		if (document.referrer.indexOf(hmehPro) != -1)
 		{
 			if ( hmeh_jQuery('#error').length > 0 || hmeh_jQuery("#hma-player").length == 0 )
-			{	
+			{
+				// Error			
 				document.documentElement.innerHTML = "<div style='color:#fff; background-color:#000; text-align:center;'>Error, please <a style='color:#fff;' title='a link... within a link... inception.... :O' href='"+document.referrer+"'>reload</a> the video.</div>";
 			}
 			else
 			{
-				var player = flowplayer(0);
-				
-			    player.onLoad(function ()
-			    {
-			        player.stop();
-			        player.hide();
-			        player.stopBuffering();
-			        player.startBuffering();
-			        player.show();
-			    });
-				
-                var targetAcquired = "youtube.com/watch?v=";
-
-                var target = hmeh_jQuery("#hmainput").val();
-
-	            var index = target.toLowerCase().indexOf(targetAcquired);
-	            var vidId = target.substr(index + targetAcquired.length);
-
-	            if (vidId.indexOf("&") != -1)
-	            {
-	                vidId = vidId.substr(0, vidId.indexOf("&"));
-	            }
-
-			    window.parent.postMessage(vidId + "|HMEH|" + hmeh_jQuery("#eow-title").text(),'*');
-				document.body.style.visibility = "hidden";
-				var video = document.getElementById("hma-player").innerHTML;
-				document.documentElement.innerHTML = video;
-				
-				hmeh_jQuery("#hma-player_api").prepend("<param name=\"wmode\" value=\"transparent\">");
+				var video = document.getElementById("hma-player").outerHTML;
+				if (document.referrer.indexOf("aplay=1") != -1) {
+					document.documentElement.innerHTML = video;
+				} else {
+					document.documentElement.innerHTML = video.replace('autostart=true', 'autostart=false');
+				}
+				document.body.style.overflow = "hidden";
+				document.body.style.height = "100%";
+				document.body.style.width = "100%";
+				document.body.style.margin = "0";
+				document.body.style.display = "";
 			}
 		}
-	}
+    }
 }
 
 function init_main()
 {
 	window.hmeh_jQuery = $.noConflict();
-	
 	var loc = hmeh_jQuery(location).attr('href');
-	
 	if (loc.toLowerCase().indexOf('hidemyass.com') != -1)
 	{			
 		hma_load();

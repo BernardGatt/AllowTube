@@ -1,0 +1,40 @@
+{
+  "name": "AllowTube",
+  "description": "This extension enables users to visit YouTube, Facebook, imdb links from behind any proxy and firewalls",
+  "manifest_version": 2,
+  "version": "1.0",
+  "icons": { "16": "icon.png",
+           "48": "icon.png",
+          "128": "icon.png" },
+  "background": {
+	"persistent": true,
+    "scripts": ["background.js"]
+  },
+  "permissions": [
+	  "webRequest",
+	  "webRequestBlocking",
+	  "<all_urls>"
+	],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["script.js"],
+      "all_frames": true,
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["*://*.hidemyass.com/*"],
+      "css": ["hidemyass.css"],
+      "js": ["hidemyass.js"],
+      "all_frames": true,
+      "run_at": "document_start"
+    },
+	{
+      "matches": ["http://hidemyass.com/*"],
+      "all_frames": true,
+      "css": ["loading.css"],
+      "run_at": "document_start"
+    }
+  ]
+
+}
