@@ -1,0 +1,16 @@
+#hmaoutercontainer, #player-api a, #hma-survey-button, #allowTubeHidden {
+    display: none !important;
+}
+
+#hma-player_wrapper {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+#include {
+	display: none !important;
+}
+
+body {
+	margin-top: 0 !important;
+}

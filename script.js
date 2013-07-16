@@ -59,17 +59,24 @@ function main_load()
 
 			hmeh_jQuery("#" + iframeId).remove();
 
-			hmeh_jQuery(document.body).append("<iframe style='visibility:hidden; margin: 0px; padding: 0px;' frameBorder='0' scrolling='no' id='" + iframeId + "' onload='this.style.visibility = \"visible\"' title='YouTube Viewer' src='" + 'http://hidemyass.com?' + hmehPro + '=' + encodeURI("http://youtube.com/watch?aembed=1&aplay=1&v=") + vidId + encodeURI("?autohide=1")+"'></iframe>");
-
+			hmeh_jQuery(document.body).append("<iframe style='visibility:hidden; margin: 0px; padding: 0px;' frameBorder='0' scrolling='no' id='" + iframeId + "' onload='this.style.visibility = \"visible\"' title='"+this.innerText.replace(/'/ig, "")+" (YouTube Viewer)' src='" + 'http://hidemyass.com?' + hmehPro + '=' + encodeURI("http://youtube.com/watch?aembed=1&aplay=1&v=") + vidId + encodeURI("?autohide=1")+"'></iframe></div>");
+			
 			hmeh_jQuery("#" + iframeId).dialog(
 				{ width: 640,
 					height: 480,
 					resizable: true,
-					close: function (event, ui) { hmeh_jQuery("#" + iframeId).remove(); }
+					beforeClose: function (event, ui) {  setTimeout(function() { hmeh_jQuery("#" + iframeId).remove(); }, 500); },
+					show: {
+						effect: "fade",
+						duration: 400
+					},
+				    hide: {
+						effect: "fade",
+						duration: 300
+				    }
 				});
-
+			hmeh_jQuery("#" + iframeId).parent().attr("style", hmeh_jQuery("#" + iframeId).parent().attr("style")+" background-image: url(chrome-extension://oejccjpebljjgadnnbokbkjheoehkcfb/loading.png), url(http://i.ytimg.com/vi/"+vidId+"/0.jpg); background-size: cover; background-size: cover; background-position: 50% 50%; background-repeat: no-repeat;");
 			hmeh_jQuery("#" + iframeId).css("width", "640px");
-
 			var onmessage = function (e)
 			{
 				var dataSplit = e.data.split("|HMEH|");
@@ -112,7 +119,7 @@ function main_load()
 	}
 }
 
-function hma_load()
+function hma_load(method)
 {
     var hmehPro = '?hmeh-pro=';
     var loc = hmeh_jQuery(location).attr('href');
@@ -120,9 +127,14 @@ function hma_load()
     if (index != -1)
     {
 	    document.body.style.display = "none";
-	    var vidId = loc.substr(index + hmehPro.length);
-	    hmeh_jQuery('form input:text').val(decodeURI(vidId));
-	    hmeh_jQuery('#hmabutton').click();
+	    var urlDomain = loc.substr(index + hmehPro.length);
+		if (method == 1) {
+			hmeh_jQuery('form input:text').val(decodeURI(urlDomain));
+			hmeh_jQuery('#hmabutton').click();
+		} else 	if (method == 2) {
+			hmeh_jQuery('#input').val(decodeURI(urlDomain));
+			hmeh_jQuery('.button').click();
+		}
     }
 	// Youtube embedding mode
     else if (document.referrer.indexOf("aembed=1") > 0)
@@ -146,7 +158,7 @@ function hma_load()
 				document.body.style.height = "100%";
 				document.body.style.width = "100%";
 				document.body.style.margin = "0";
-				document.body.style.display = "";
+				document.documentElement.style.display = "";
 			}
 		}
     }
@@ -158,7 +170,11 @@ function init_main()
 	var loc = hmeh_jQuery(location).attr('href');
 	if (loc.toLowerCase().indexOf('hidemyass.com') != -1)
 	{			
-		hma_load();
+		hma_load(1);
+	} 
+	else if (loc.toLowerCase().indexOf('turbohide.com') != -1)
+	{			
+		hma_load(2);
 	}
 	else
 	{
