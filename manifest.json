@@ -2,7 +2,7 @@
   "name": "AllowTube",
   "description": "This extension enables users to visit YouTube, Facebook, IMDB links from behind any proxy and firewalls",
   "manifest_version": 2,
-  "version": "1.0.2",
+  "version": "1.0.7",
   "icons": { "16": "icon.png",
            "48": "icon.png",
           "128": "icon.png" },
@@ -22,7 +22,11 @@
 	  "<all_urls>"
 	],
  "web_accessible_resources": [
-	"loading.png"
+	"loading.css",
+	"loading.png",
+	"script.js",
+	"proxy.js",
+	"proxy.css"
  ],
   "content_scripts": [
     {
@@ -32,14 +36,14 @@
       "run_at": "document_end"
     },
     {
-      "matches": ["*://*.hidemyass.com/*", "*://*.turbohide.com/*"],
+      "matches": ["*://*.hidemyass.com/*", "*://*.turbohide.com/*", "*://*.youtubeunblocker.org/*", "*://*.proxfree.com/*"],
       "css": ["proxy.css"],
       "js": ["proxy.js"],
       "all_frames": true,
       "run_at": "document_start"
     },
 	{
-      "matches": ["http://hidemyass.com/*"],
+      "matches": ["http://hidemyass.com/*", "*://www.youtubeunblocker.org/", "*://www.proxfree.com/"],
       "all_frames": true,
       "css": ["loading.css"],
       "run_at": "document_start"
